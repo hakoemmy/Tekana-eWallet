@@ -12,6 +12,7 @@ import {
   ApiAcceptedResponse,
   ApiBody,
   ApiCookieAuth,
+  ApiOkResponse,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
@@ -21,9 +22,10 @@ import { GetUserRes, LoginReq, PostUserReq } from "./dto";
 import {
   AuthAccessTokenCookieService,
   AuthRefreshTokenCookieService,
+  AuthService,
   UserService,
 } from "../../services";
-import { JwtRTGuard, LocalAuthGuard } from "../../../users/guards";
+import { JwtATGuard, JwtRTGuard, LocalAuthGuard } from "../../../users/guards";
 import { User } from "@prisma/client";
 import { PrismaService } from "../../../common/services";
 
@@ -35,7 +37,8 @@ export class AuthControllerV1 {
     private readonly userService: UserService,
     private readonly authAccessTokenCookieService: AuthAccessTokenCookieService,
     private readonly authRefreshTokenCookieService: AuthRefreshTokenCookieService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly authService: AuthService
   ) {}
   @Post("/register")
   @HttpCode(HttpStatus.CREATED)
@@ -97,5 +100,21 @@ export class AuthControllerV1 {
         })
       )
     );
+  }
+
+  @Post('logout')
+  @UseGuards(JwtATGuard, JwtRTGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiCookieAuth(JWT_COOKIE_NAME.AT)
+  @ApiCookieAuth(JWT_COOKIE_NAME.RT)
+  @ApiOkResponse()
+  @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.BAD_REQUEST })
+  async logout(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
+    const [atc, rtc] = await this.authService.getLogoutCookies(
+      req.user.tokenId,
+    );
+    res.header('Set-Cookie', atc);
+    res.header('Set-Cookie', rtc);
+    res.send();
   }
 }

@@ -1,21 +1,12 @@
-import * as bcrypt from 'bcrypt';
-import { Prisma, Token, TokenType, User } from '@prisma/client';
 import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
+  Injectable
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { JWT_COOKIE_NAME } from '../../__helpers__/enums';
-import { EVK } from '../../__helpers__';
 import { PrismaService } from '../../common/services';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
     private readonly prisma: PrismaService
   ) {}
 

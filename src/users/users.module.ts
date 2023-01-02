@@ -47,7 +47,8 @@ import { PrismaService } from "../common/services";
 export class UserModule implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private configService: ConfigService
   ) {}
 
   async onModuleInit() {
@@ -55,16 +56,16 @@ export class UserModule implements OnModuleInit {
     // that is essential to debit it and credit customers's wallets after successful funds deposit
     // Also this user can be used to do any other super admin related activities
     const superAdminUser = await this.prisma.user.findFirst({
-      where: { username: "tekana" }
+      where: { username: this.configService.get(EVK.SUPER_ADMIN_USERNAME) },
     });
 
     if (!superAdminUser) {
       try {
         await this.userService.createOne({
-          email: "",
-          username: "",
-          password: "",
-          Roles: ["SuperAdmin"],
+          email: this.configService.get(EVK.SUPER_ADMIN_EMAIL),
+          username: this.configService.get(EVK.SUPER_ADMIN_USERNAME),
+          password: this.configService.get(EVK.SUPER_ADMIN_PASSWORD),
+          Roles: ["SuperAdmin"]
         });
       } catch (error) {
         console.error(error);
