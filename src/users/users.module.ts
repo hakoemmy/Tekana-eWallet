@@ -61,9 +61,9 @@ export class UserModule implements OnModuleInit {
     if (!superAdminUser) {
       try {
         await this.userService.createOne({
-          email: "tekana@tekana.com",
-          username: "tekana",
-          password: "12345678",
+          email: "",
+          username: "",
+          password: "",
           Roles: ["SuperAdmin"],
         });
       } catch (error) {

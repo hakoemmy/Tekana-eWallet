@@ -8,11 +8,10 @@ import { AbstractAuthCookieService } from "../../__helpers__/classes";
 import { EVK } from "../../__helpers__";
 import { JWT_COOKIE_NAME } from "../../__helpers__/enums";
 import { TokenType } from "@prisma/client";
-import { RefreshTokenPayload } from "../interfaces";
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthRefreshTokenCookieService extends AbstractAuthCookieService {
-  private readonly JWT_RT_EXP_DEFAULT = 2147483647;
+  private readonly JWT_RT_EXP_DEFAULT = 2629746;
 
   constructor(
     protected readonly prisma: PrismaService,
@@ -46,8 +45,6 @@ export class AuthRefreshTokenCookieService extends AbstractAuthCookieService {
 
   async getRTTokenPayload(id: number) {
     const refreshTokenRecord = await this.createRefreshTokenRecord(id);
-
-    let payload: RefreshTokenPayload;
 
     return {
       userId: id,

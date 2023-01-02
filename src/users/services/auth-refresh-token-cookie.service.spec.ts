@@ -70,7 +70,7 @@ describe('AuthRefreshTokenCookieService', () => {
   });
 
   it('createRefreshTokenRecord', async () => {
-    await service.createRefreshTokenRecord(userId, 'USER');
+    await service.createRefreshTokenRecord(userId);
 
     expect(prisma.token.create).toHaveBeenLastCalledWith({
       data: { userId, type: TokenType.Refresh, value: '' },

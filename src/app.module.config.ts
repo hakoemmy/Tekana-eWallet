@@ -15,5 +15,8 @@ export const configModuleOptions: ConfigModuleOptions = {
     [EVK.JWT_AT_EXP]: Joi.number().required(),
     [EVK.JWT_RT_SECRET]: Joi.string().required(),
     [EVK.JWT_RT_EXP]: Joi.number().required(),
+    [EVK.SUPER_ADMIN_USERNAME]: Joi.string().required(),
+    [EVK.SUPER_ADMIN_PASSWORD]: Joi.string().required(),
+    [EVK.SUPER_ADMIN_EMAIL]: Joi.string().required(),
   }),
 };

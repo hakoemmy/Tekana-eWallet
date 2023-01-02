@@ -8,16 +8,24 @@ import {
   Res,
   UseGuards,
 } from "@nestjs/common";
-import { ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiAcceptedResponse,
+  ApiBody,
+  ApiCookieAuth,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { HttpExceptionSchema } from "../../../__helpers__";
+import { HttpExceptionSchema, JWT_COOKIE_NAME } from "../../../__helpers__";
 import { GetUserRes, LoginReq, PostUserReq } from "./dto";
 import {
   AuthAccessTokenCookieService,
   AuthRefreshTokenCookieService,
   UserService,
 } from "../../services";
-import { LocalAuthGuard } from "../../../users/guards";
+import { JwtRTGuard, LocalAuthGuard } from "../../../users/guards";
+import { User } from "@prisma/client";
+import { PrismaService } from "../../../common/services";
 
 @ApiTags("users")
 @Controller({ path: "auth", version: "1" })
@@ -26,7 +34,8 @@ export class AuthControllerV1 {
   constructor(
     private readonly userService: UserService,
     private readonly authAccessTokenCookieService: AuthAccessTokenCookieService,
-    private readonly authRefreshTokenCookieService: AuthRefreshTokenCookieService
+    private readonly authRefreshTokenCookieService: AuthRefreshTokenCookieService,
+    private readonly prisma: PrismaService
   ) {}
   @Post("/register")
   @HttpCode(HttpStatus.CREATED)
@@ -50,11 +59,7 @@ export class AuthControllerV1 {
     },
   })
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.BAD_REQUEST })
-  async login(
-    @Req() req: FastifyRequest,
-    @Res() res: FastifyReply,
-    @Body() body: LoginReq
-  ) {
+  async login(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
     const atc = await this.authAccessTokenCookieService.getATCookie(
       req.user.id
     );
@@ -71,5 +76,26 @@ export class AuthControllerV1 {
 
     delete resp.password;
     res.send(new GetUserRes(resp));
+  }
+
+  @Post("refresh")
+  @UseGuards(JwtRTGuard)
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiCookieAuth(JWT_COOKIE_NAME.RT)
+  @ApiAcceptedResponse({ type: GetUserRes })
+  @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.UNAUTHORIZED })
+  async signAccessToken(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
+    const atc = await this.authAccessTokenCookieService.getATCookie(
+      req.user.id
+    );
+    res.header("Set-Cookie", atc.cookie);
+    res.send(
+      new GetUserRes(
+        await this.prisma.user.findUnique({
+          where: { id: req.user.id },
+          include: { Wallet: true }
+        })
+      )
+    );
   }
 }
