@@ -10,6 +10,5 @@ export enum EVK {
     JWT_AT_EXP = 'JWT_AT_EXP',
     JWT_RT_SECRET = 'JWT_RT_SECRET',
     JWT_RT_EXP = 'JWT_RT_EXP'
-    
   }
   

@@ -18,9 +18,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --config ./jest.config.js --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "yarn db:reset:force && jest -i --config ./test/jest-e2e.json --verbose",
-    "test:migration": "yarn db:reset:force && jest -i --config ./prisma/data-migrations/jest-migrations.json --verbose",
-    "docker:up": "docker-compose up --build"
+    "docker:up": "docker-compose up --build",
+    "seed:dev": "ts-node prisma/seed.dev.ts"
   },
   "dependencies": {
     "@fastify/cors": "7.0.0",
