@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SuperAdmin
+  Admin
+}
+
+enum TokenType {
+  Activation
+  PasswordReset
+  Refresh
+}
+
+//
+// Users model
+// This model is used to keep details of any user that uses Tekan-eWallet, such as customers, Tekana-eWallet admins etc
+//
+
+model User {
+  id                     Int                    @id @default(autoincrement())
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @default(now()) @updatedAt
+  username               String                 @unique
+  email                  String                 @unique
+  emailVerified          Boolean                @default(false)
+  phoneNumber            String?                @unique
+  phoneNumberVerified    Boolean                @default(false)
+  password               String
+  firstName              String?
+  lastName               String?
+  Tokens                 Token[]
+  // A user can have one or more roles, When a user registers, he/she is a customer by default 
+  Roles                  Role[]             
+  flagged                Boolean                @default(false)
+
+  @@index([email, username])
+}
+
+//
+// Token model
+// This model keeps user refresh tokens
+//
+model Token {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  type      TokenType
+  value     String
+  User      User?     @relation(fields: [userId], references: [id])
+  userId    Int?
+}
