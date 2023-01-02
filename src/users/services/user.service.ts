@@ -37,13 +37,13 @@ export class UserService {
     try {
       const user = await this.prisma.user.create({
         data: {
+          ...data,
           username: data.username,
           email: data.email,
           password: await bcrypt.hash(data.password, 10),
           phoneNumberVerified: false,
           emailVerified: false,
           flagged: false,
-          ...data,
         },
       });
 

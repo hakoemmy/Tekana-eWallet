@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Prisma } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { Transform } from "class-transformer";
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches } from "class-validator";
+import { STRATEGY_LOCAL } from "../../../../__helpers__";
 
 
 export class PostUserReq implements Partial<Prisma.UserCreateInput> {
@@ -34,4 +35,14 @@ export class PostUserReq implements Partial<Prisma.UserCreateInput> {
     @IsString()
     @IsOptional()
     phoneNumber?: string;
+  }
+
+  export class LoginReq implements Partial<User> {
+    @ApiProperty()
+    @IsString()
+    [STRATEGY_LOCAL.usernameField]: string;
+  
+    @ApiProperty()
+    @IsString()
+    [STRATEGY_LOCAL.passwordField]: string;
   }

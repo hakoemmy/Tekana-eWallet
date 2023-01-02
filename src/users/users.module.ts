@@ -3,8 +3,13 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { HttpModule } from "@nestjs/axios";
 import { AuthControllerV1 } from "./controllers/v1";
-import { AuthService, UserService } from "./services";
-import { EVK, NODE_ENV } from "../__helpers__";
+import {
+  AuthService,
+  UserService,
+  AuthAccessTokenCookieService,
+  AuthRefreshTokenCookieService,
+} from "./services";
+import { EVK } from "../__helpers__";
 import { JwtATStrategy, JwtRTStrategy, LocalStrategy } from "./auth-strategy";
 import { CommonModule } from "../common/common.module";
 import { PassportModule } from "@nestjs/passport";
@@ -35,35 +40,34 @@ import { PrismaService } from "../common/services";
     LocalStrategy,
     JwtATStrategy,
     JwtRTStrategy,
+    AuthAccessTokenCookieService,
+    AuthRefreshTokenCookieService,
   ],
 })
 export class UserModule implements OnModuleInit {
   constructor(
-    private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
     private readonly userService: UserService
   ) {}
 
   async onModuleInit() {
-    const env = this.configService.get<NODE_ENV>(EVK.NODE_ENV);
+    // Upsert SuperAdmin User, this user will be used to create master e-wallet
+    // that is essential to debit it and credit customers's wallets after successful funds deposit
+    // Also this user can be used to do any other super admin related activities
+    const superAdminUser = await this.prisma.user.findFirst({
+      where: { username: "tekana" }
+    });
 
-    // Upsert SuperAdmin User for dev environment
-    if (env === NODE_ENV.DEV || env === NODE_ENV.TEST) {
-      const superAdminUser = await this.prisma.user.findFirst({
-        where: { username: "tekana" },
-      });
-
-      if (!superAdminUser) {
-        try {
-          await this.userService.createOne({
-            email: "tekana-ewallet@email.com",
-            username: "tekana",
-            password: "12345678",
-            Roles: ["SuperAdmin"],
-          });
-        } catch (error) {
-          console.error(error);
-        }
+    if (!superAdminUser) {
+      try {
+        await this.userService.createOne({
+          email: "tekana@tekana.com",
+          username: "tekana",
+          password: "12345678",
+          Roles: ["SuperAdmin"],
+        });
+      } catch (error) {
+        console.error(error);
       }
     }
   }

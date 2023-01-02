@@ -38,6 +38,6 @@ export class LocalStrategy extends PassportStrategy(Strategy, STRATEGY.LOCAL) {
     if (!(await bcrypt.compare(password, user.password)))
       throw new BadRequestException('Wrong credentials');
 
-    return { ...user, type: 'USER' };
+    return user;
   }
 }
