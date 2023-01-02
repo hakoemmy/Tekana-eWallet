@@ -18,34 +18,45 @@ enum TokenType {
   Refresh
 }
 
+enum Currency {
+  RWF
+  USD
+}
+
+enum TransactionType {
+  Transfer
+  Deposit
+}
+
 //
 // Users model
 // This model is used to keep details of any user that uses Tekan-eWallet, such as customers, Tekana-eWallet admins etc
 //
 
 model User {
-  id                     Int                    @id @default(autoincrement())
-  createdAt              DateTime               @default(now())
-  updatedAt              DateTime               @default(now()) @updatedAt
-  username               String                 @unique
-  email                  String                 @unique
-  emailVerified          Boolean                @default(false)
-  phoneNumber            String?                @unique
-  phoneNumberVerified    Boolean                @default(false)
-  password               String
-  firstName              String?
-  lastName               String?
-  Tokens                 Token[]
+  id                  Int      @id @default(autoincrement())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now()) @updatedAt
+  username            String   @unique
+  email               String   @unique
+  emailVerified       Boolean  @default(false)
+  phoneNumber         String?  @unique
+  phoneNumberVerified Boolean  @default(false)
+  password            String
+  firstName           String?
+  lastName            String?
+  Tokens              Token[]
   // A user can have one or more roles, When a user registers, he/she is a customer by default 
-  Roles                  Role[]             
-  flagged                Boolean                @default(false)
+  Roles               Role[]
+  flagged             Boolean  @default(false)
+  Wallet              Wallet[]
 
   @@index([email, username])
 }
 
 //
 // Token model
-// This model keeps user refresh tokens
+// This model keeps user refresh tokens for future automatic re-authorization when the initial access token expires
 //
 model Token {
   id        Int       @id @default(autoincrement())
@@ -55,4 +66,38 @@ model Token {
   value     String
   User      User?     @relation(fields: [userId], references: [id])
   userId    Int?
+}
+
+//
+//
+// Wallet model to keep customers wallets, a customer can have only one wallet for a certain currency
+//
+//
+
+model Wallet {
+  id                 Int           @id @default(autoincrement())
+  User               User          @relation(fields: [userId], references: [id])
+  userId             Int
+  balance            Float         @default(0)
+  currency           Currency      @default(RWF)
+  CreditTransactions Transaction[] @relation("toWallet")
+  DebitTransactions  Transaction[] @relation("fromWallet")
+
+  @@unique([userId, currency])
+}
+
+//
+//
+// Transactions model to keep Tekana-eWallet daily transaction records
+//
+//
+model Transaction {
+  id           Int             @id @default(autoincrement())
+  amount       Int
+  toWallet     Wallet          @relation("toWallet", fields: [toWalletId], references: [id])
+  fromWallet   Wallet          @relation("fromWallet", fields: [fromWalletId], references: [id])
+  toWalletId   Int
+  fromWalletId Int
+  purpose      TransactionType
+  createdAt    DateTime        @default(now())
 }
