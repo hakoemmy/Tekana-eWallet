@@ -26,4 +26,15 @@ export class WalletService {
       throw new InternalServerErrorException();
     }
   }
+
+  async getWallets(userId: number) {
+    try {
+      return await this.prisma.wallet.findMany({
+        where: { userId },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException();
+    }
+  }
 }

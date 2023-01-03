@@ -20,7 +20,7 @@ import { WalletModule } from "./wallet/wallet.module";
         module: UserModule,
       },
       {
-        path: "wallet",
+        path: "wallets",
         module: WalletModule,
       },
     ]),

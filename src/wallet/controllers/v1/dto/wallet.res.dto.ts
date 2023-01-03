@@ -4,7 +4,7 @@ import { Expose } from "class-transformer";
 import { BaseResV1 } from "../../../../__helpers__/dto";
 
 
-@ApiTags('wallet')
+@ApiTags('wallets')
 export class WalletBalanceRes extends BaseResV1 implements Partial<Wallet> {
   @ApiProperty({
     type: 'integer',
