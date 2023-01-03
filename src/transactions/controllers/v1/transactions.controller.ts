@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpStatus,
   NotFoundException,
@@ -16,6 +17,7 @@ import { JwtATGuard } from "../../../users/guards";
 import { HttpExceptionSchema, JWT_COOKIE_NAME } from "../../../__helpers__";
 import { GetTransactionRes, PostTransactionReq, TransferFundsReq } from "./dto";
 import { isEmail } from "class-validator";
+import { WalletService } from "../../../wallets/services";
 
 @ApiTags("wallets")
 @Controller({ path: "wallets/transactions", version: "1" })
@@ -23,7 +25,8 @@ import { isEmail } from "class-validator";
 export class TransactionsControllerV1 {
   constructor(
     private readonly transactionService: TransactionsService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly walletService: WalletService
   ) {}
 
   @Post("/deposit")
@@ -61,6 +64,16 @@ export class TransactionsControllerV1 {
     if (!user) {
       throw new NotFoundException("Email or username not found");
     }
+
+    const senderWallet = await this.walletService.findOrCreate({
+      userId: req.user.id,
+      currency: data.currency,
+    });
+
+    if(data.amount > senderWallet.balance){
+       throw new ForbiddenException(`Insufficient funds, your current balance is ${senderWallet.balance} ${data.currency}`)
+     };
+
     const resp = await this.transactionService.transfer({
       userId: req.user.id,
       amount: data.amount,
