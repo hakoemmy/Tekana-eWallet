@@ -46,10 +46,18 @@ export class UserService {
           flagged: false,
         },
       });
-
+      
+      // Create user USD and RWF wallets
       await this.prisma.$transaction([
         this.prisma.wallet.create({
           data: {
+            currency: "RWF",
+            User: { connect: { id: user.id } },
+          },
+        }),
+        this.prisma.wallet.create({
+          data: {
+            currency: "USD",
             User: { connect: { id: user.id } },
           },
         }),
