@@ -43,6 +43,7 @@ import { PrismaService } from "../common/services";
     AuthAccessTokenCookieService,
     AuthRefreshTokenCookieService,
   ],
+  exports: [UserService],
 })
 export class UserModule implements OnModuleInit {
   constructor(
@@ -65,7 +66,7 @@ export class UserModule implements OnModuleInit {
           email: this.configService.get(EVK.SUPER_ADMIN_EMAIL),
           username: this.configService.get(EVK.SUPER_ADMIN_USERNAME),
           password: this.configService.get(EVK.SUPER_ADMIN_PASSWORD),
-          Roles: ["SuperAdmin"]
+          Roles: ["SuperAdmin"],
         });
       } catch (error) {
         console.error(error);

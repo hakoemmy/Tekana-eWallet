@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   HttpCode,
   HttpStatus,
@@ -45,6 +46,30 @@ export class AuthControllerV1 {
   @ApiResponse({ type: GetUserRes, status: HttpStatus.CREATED })
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.BAD_REQUEST })
   async create(@Body() data: PostUserReq) {
+    const checkEmail = await this.userService.findOne({
+      email: data.email,
+    });
+
+    if (checkEmail) {
+      throw new ConflictException("Email already in use");
+    }
+
+    const checkUsername = await this.userService.findOne({
+      username: data.username,
+    });
+
+    if (checkUsername) {
+      throw new ConflictException("Username already in use");
+    }
+
+    const checkPhoneNumber = await this.userService.findOne({
+      phoneNumber: data.phoneNumber,
+    });
+
+    if (checkPhoneNumber && data.phoneNumber) {
+      throw new ConflictException("Phone number already in use");
+    }
+
     const resp = await this.userService.createOne(data);
 
     return new GetUserRes(resp);
@@ -96,13 +121,13 @@ export class AuthControllerV1 {
       new GetUserRes(
         await this.prisma.user.findUnique({
           where: { id: req.user.id },
-          include: { Wallet: true }
+          include: { Wallet: true },
         })
       )
     );
   }
 
-  @Post('logout')
+  @Post("logout")
   @UseGuards(JwtATGuard, JwtRTGuard)
   @HttpCode(HttpStatus.OK)
   @ApiCookieAuth(JWT_COOKIE_NAME.AT)
@@ -111,10 +136,10 @@ export class AuthControllerV1 {
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.BAD_REQUEST })
   async logout(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
     const [atc, rtc] = await this.authService.getLogoutCookies(
-      req.user.tokenId,
+      req.user.tokenId
     );
-    res.header('Set-Cookie', atc);
-    res.header('Set-Cookie', rtc);
+    res.header("Set-Cookie", atc);
+    res.header("Set-Cookie", rtc);
     res.send();
   }
 }

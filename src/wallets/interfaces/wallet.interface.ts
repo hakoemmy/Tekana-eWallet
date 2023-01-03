@@ -7,7 +7,7 @@ export interface WalletFindOrCreateParams {
 
 export interface FindWalletByUserNameParams {
   currency: Currency;
-  username: string;
+  emailOrUsername: string;
 };
 
 

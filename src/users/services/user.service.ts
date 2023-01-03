@@ -22,6 +22,9 @@ export class UserService {
         username: options.username
           ? { equals: options.username, mode: "insensitive" }
           : undefined,
+        phoneNumber: options.phoneNumber
+          ? { equals: options.phoneNumber }
+          : undefined,
       },
       include: {
         Wallet: true,
@@ -46,7 +49,7 @@ export class UserService {
           flagged: false,
         },
       });
-      
+
       // Create user USD and RWF wallets
       await this.prisma.$transaction([
         this.prisma.wallet.create({

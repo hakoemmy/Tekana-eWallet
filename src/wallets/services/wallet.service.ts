@@ -4,6 +4,7 @@ import {
   FindWalletByUserNameParams,
   WalletFindOrCreateParams,
 } from "../interfaces";
+import { isEmail } from "class-validator";
 
 @Injectable()
 export class WalletService {
@@ -47,18 +48,28 @@ export class WalletService {
   }
 
   /**
-   * @params { username, currency }: FindWalletByUserNameParams
+   * @params { emailOrUsername, currency }: FindWalletByUserNameParams
    * - Get wallet by username
    * @returns user wallet
    */
-  async findWalletByUsername({
-    username,
+  async findWalletByUsernameOrEmail({
+    emailOrUsername,
     currency,
   }: FindWalletByUserNameParams) {
     try {
-      return await this.prisma.wallet.findFirst({
-        where: { User: { username }, currency },
-      });
+      return isEmail(emailOrUsername)
+        ? await this.prisma.wallet.findFirst({
+            where: {
+              User: { email: emailOrUsername },
+              currency,
+            },
+          })
+        : await this.prisma.wallet.findFirst({
+            where: {
+              User: { username: emailOrUsername },
+              currency,
+            },
+          });
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException();
@@ -90,7 +101,7 @@ export class WalletService {
     return this.prisma.wallet.update({
       where: { id: creditWalletId },
       data: {
-        balance: { increment: amount }
+        balance: { increment: amount },
       },
     });
   }

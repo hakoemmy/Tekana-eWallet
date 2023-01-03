@@ -7,3 +7,11 @@ export interface DepositFundsParams<T> {
   transactionDate: Date;
 };
 
+export interface TransferFundsParams<T> {
+  userId: number;
+  amount: number;
+  currency: Currency;
+  transactionDate: Date;
+  emailOrUsername: string;
+};
+
