@@ -10,7 +10,7 @@ import {
 import { ApiCookieAuth, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Currency } from "@prisma/client";
 import { FastifyRequest } from "fastify";
-import { WalletService } from "src/wallet/services";
+import { WalletService } from "src/wallets/services";
 import { JwtATGuard } from "../../../users/guards";
 import { HttpExceptionSchema, JWT_COOKIE_NAME } from "../../../__helpers__";
 import { WalletBalanceRes } from "./dto";

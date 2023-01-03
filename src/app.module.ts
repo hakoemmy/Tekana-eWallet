@@ -6,7 +6,8 @@ import { ConfigModule } from "@nestjs/config";
 import { CommonModule } from "./common/common.module";
 import { UserModule } from "./users/users.module";
 import { RouterModule } from "@nestjs/core";
-import { WalletModule } from "./wallet/wallet.module";
+import { WalletModule } from "./wallets/wallet.module";
+import { TransactionsModule } from "./transactions/transactions.module";
 @Module({
   imports: [
     JwtModule.register({}),
@@ -14,6 +15,7 @@ import { WalletModule } from "./wallet/wallet.module";
     CommonModule,
     UserModule,
     WalletModule,
+    TransactionsModule,
     RouterModule.register([
       {
         path: "users",

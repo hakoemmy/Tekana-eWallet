@@ -7,5 +7,6 @@ import { CommonModule } from "../common/common.module";
   imports: [CommonModule],
   controllers: [WalletControllerV1],
   providers: [WalletService],
+  exports: [WalletService],
 })
 export class WalletModule {}

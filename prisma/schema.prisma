@@ -28,6 +28,12 @@ enum TransactionType {
   Deposit
 }
 
+enum TransactionStatus {
+  Pending
+  Failed
+  Successful
+}
+
 //
 // Users model
 // This model is used to keep details of any user that uses Tekan-eWallet, such as customers, Tekana-eWallet admins etc
@@ -92,12 +98,13 @@ model Wallet {
 //
 //
 model Transaction {
-  id           Int             @id @default(autoincrement())
+  id           Int               @id @default(autoincrement())
   amount       Int
-  toWallet     Wallet          @relation("toWallet", fields: [toWalletId], references: [id])
-  fromWallet   Wallet          @relation("fromWallet", fields: [fromWalletId], references: [id])
+  toWallet     Wallet            @relation("toWallet", fields: [toWalletId], references: [id])
+  fromWallet   Wallet            @relation("fromWallet", fields: [fromWalletId], references: [id])
   toWalletId   Int
   fromWalletId Int
   purpose      TransactionType
-  createdAt    DateTime        @default(now())
+  status       TransactionStatus @default(Pending)
+  createdAt    DateTime          @default(now())
 }

@@ -5,3 +5,9 @@ export interface WalletFindOrCreateParams {
   currency: Currency;
 };
 
+export interface FindWalletByUserNameParams {
+  currency: Currency;
+  username: string;
+};
+
+
