@@ -19,7 +19,7 @@ export abstract class AbstractAuthCookieService {
       nodeEnv === NODE_ENV.PROD
         ? 'domain=.tekana.com;'
         : nodeEnv === NODE_ENV.STAGE
-        ? 'domain=.tekana-dev.com;'
+        ? 'domain=.rssb.onrender.com;'
         : '';
   }
 
