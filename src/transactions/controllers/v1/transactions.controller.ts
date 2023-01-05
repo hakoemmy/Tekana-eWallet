@@ -6,6 +6,7 @@ import {
   HttpStatus,
   NotFoundException,
   Post,
+  Query,
   Req,
   UseGuards,
 } from "@nestjs/common";
@@ -15,7 +16,12 @@ import { UserService } from "../../../users/services";
 import { TransactionsService } from "../../../transactions/services";
 import { JwtATGuard } from "../../../users/guards";
 import { HttpExceptionSchema, JWT_COOKIE_NAME } from "../../../__helpers__";
-import { GetTransactionRes, PostTransactionReq, TransferFundsReq } from "./dto";
+import {
+  GetTransactionRes,
+  PostTransactionReq,
+  TransactionQueryParams,
+  TransferFundsReq,
+} from "./dto";
 import { isEmail } from "class-validator";
 import { WalletService } from "../../../wallets/services";
 
@@ -70,9 +76,11 @@ export class TransactionsControllerV1 {
       currency: data.currency,
     });
 
-    if(data.amount > senderWallet.balance){
-       throw new ForbiddenException(`Insufficient funds, your current balance is ${senderWallet.balance} ${data.currency}`)
-     };
+    if (data.amount > senderWallet.balance) {
+      throw new ForbiddenException(
+        `Insufficient funds, your current balance is ${senderWallet.balance} ${data.currency}`
+      );
+    }
 
     const resp = await this.transactionService.transfer({
       userId: req.user.id,
@@ -83,5 +91,23 @@ export class TransactionsControllerV1 {
     });
 
     return new GetTransactionRes(resp);
+  }
+
+  @Get()
+  @UseGuards(JwtATGuard)
+  @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.FORBIDDEN })
+  @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.UNAUTHORIZED })
+  @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.NOT_FOUND })
+  @ApiResponse({ type: [GetTransactionRes], status: HttpStatus.OK })
+  async getUserTransactions(
+    @Req() req: FastifyRequest,
+    @Query() query: TransactionQueryParams
+  ) {
+    const resp = await this.transactionService.getTransactions(
+      req.user.id,
+      query
+    );
+
+    return resp.map((transaction) => new GetTransactionRes(transaction));
   }
 }

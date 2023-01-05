@@ -1,8 +1,9 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { Currency } from "@prisma/client";
+import { Currency, Prisma } from "@prisma/client";
 import { WalletService } from "../../wallets/services";
 import { PrismaService } from "../../common/services";
 import { DepositFundsParams, TransferFundsParams } from "../interfaces";
+import { TransactionQueryParams } from "../controllers/v1/dto";
 
 @Injectable()
 export class TransactionsService {
@@ -29,7 +30,7 @@ export class TransactionsService {
       const tekanaWallet = await this.walletService.findWalletByUsernameOrEmail(
         {
           emailOrUsername: "tekana",
-          currency
+          currency,
         }
       );
 
@@ -127,6 +128,79 @@ export class TransactionsService {
       };
     } catch (error) {
       console.error(error);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  /**
+   * @params  userId: the id of a user
+   * - Get user transactions
+   * @returns user transactions
+   */
+
+  async getTransactions(userId: number, query: TransactionQueryParams) {
+    try {
+      const where: Prisma.TransactionWhereInput = {
+        OR: [
+          {
+            toWallet: { userId },
+          },
+          {
+            fromWallet: { userId },
+          },
+        ],
+      };
+
+      if (query.currency)
+        where.OR = {
+          OR: [
+            {
+              toWallet: { userId, currency: query.currency },
+            },
+            {
+              fromWallet: { userId, currency: query.currency },
+            },
+          ],
+        };
+      if (query.purpose) where.purpose = { equals: query.purpose };
+      if (query.status) where.status = { equals: query.status };
+
+      return await this.prisma.transaction.findMany({
+        where: { ...where },
+        include: {
+          toWallet: {
+            select: {
+              userId: true,
+              User: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  username: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          fromWallet: {
+            select: {
+              userId: true,
+              User: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  username: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+        take: query.take,
+        skip: query.skip,
+        orderBy: { createdAt: "desc" },
+      });
+    } catch (err) {
+      console.log(err);
       throw new InternalServerErrorException();
     }
   }
