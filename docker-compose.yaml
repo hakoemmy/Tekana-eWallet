@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  api:
+    container_name: tekana-ewallet-api
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      [
+        '/bin/sh',
+        '-c',
+        'yarn prisma generate && yarn prisma migrate deploy && yarn start:dev',
+      ]
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env.dev
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@postgres:5432/tekana?schema=public
+  postgres:
+    container_name: postgres
+    restart: on-failure
+    image: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - /data/postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=tekana

@@ -10,7 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "dev": "nest start --watch",
-    "start": "nest start",
+    "start": "yarn migrate-db && nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -19,7 +19,8 @@
     "test:cov": "jest --config ./jest.config.js --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "docker:up": "docker-compose up --build",
-    "seed:dev": "ts-node prisma/seed.dev.ts"
+    "seed:dev": "ts-node prisma/seed.dev.ts",
+    "migrate-db": "yarn prisma migrate dev"
   },
   "dependencies": {
     "@fastify/cors": "7.0.0",
