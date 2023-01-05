@@ -21,7 +21,7 @@ import {
       if (
         !origin ||
         hostname === 'localhost' ||
-        (new RegExp(/.*\.herokuapp\.com$/).test(hostname) &&
+        (new RegExp(/.*\.onrender\.com$/).test(hostname) &&
           process.env.NODE_ENV !== NODE_ENV.PROD)
       ) {
         corsOptions.origin = true;
