@@ -16,7 +16,7 @@ export class UserManagmentControllerV1 {
 
   @Get()
   @UseGuards(JwtATGuard, RbacGuard)
-  @Roles(Role.SuperAdmin, Role.Admin)
+  @Roles(Role.Admin)
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.FORBIDDEN })
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.UNAUTHORIZED })
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.NOT_FOUND })

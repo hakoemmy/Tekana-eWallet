@@ -18,9 +18,7 @@ export class RbacGuard implements CanActivate {
     ]);
 
     if (!requiredRoles) return true;
-
-    requiredRoles.unshift("SuperAdmin");
-
+      requiredRoles.unshift("SuperAdmin");
     const { user } = context.switchToHttp().getRequest<FastifyRequest>();
 
     return requiredRoles.some((role) => user.Roles?.includes(role));

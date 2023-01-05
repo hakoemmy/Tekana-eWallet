@@ -10,6 +10,7 @@ datasource db {
 enum Role {
   SuperAdmin
   Admin
+  Customer
 }
 
 enum TokenType {
@@ -53,7 +54,7 @@ model User {
   lastName            String?
   Tokens              Token[]
   // A user can have one or more roles, When a user registers, he/she is a customer by default 
-  Roles               Role[]
+  Roles               Role[]  
   flagged             Boolean  @default(false)
   Wallet              Wallet[]
 

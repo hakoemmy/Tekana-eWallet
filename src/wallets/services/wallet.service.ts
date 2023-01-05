@@ -88,6 +88,17 @@ export class WalletService {
       data: {
         balance: { decrement: amount },
       },
+      select: {
+        userId: true,
+        User: {
+          select: {
+            firstName: true,
+            lastName: true,
+            username: true,
+            email: true,
+          },
+        },
+      },
     });
   }
 
@@ -102,6 +113,17 @@ export class WalletService {
       where: { id: creditWalletId },
       data: {
         balance: { increment: amount },
+      },
+      select: {
+        userId: true,
+        User: {
+          select: {
+            firstName: true,
+            lastName: true,
+            username: true,
+            email: true,
+          },
+        },
       },
     });
   }

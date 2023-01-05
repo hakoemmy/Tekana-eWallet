@@ -15,7 +15,7 @@ import { FastifyRequest } from "fastify";
 import { UserService } from "../../../users/services";
 import { TransactionsService } from "../../../transactions/services";
 import { JwtATGuard } from "../../../users/guards";
-import { HttpExceptionSchema, JWT_COOKIE_NAME } from "../../../__helpers__";
+import { HttpExceptionSchema, JWT_COOKIE_NAME, RbacGuard, Roles } from "../../../__helpers__";
 import {
   GetTransactionRes,
   PostTransactionReq,
@@ -24,6 +24,7 @@ import {
 } from "./dto";
 import { isEmail } from "class-validator";
 import { WalletService } from "../../../wallets/services";
+import { Role } from "@prisma/client";
 
 @ApiTags("wallets")
 @Controller({ path: "wallets/transactions", version: "1" })
@@ -36,7 +37,8 @@ export class TransactionsControllerV1 {
   ) {}
 
   @Post("/deposit")
-  @UseGuards(JwtATGuard)
+  @UseGuards(JwtATGuard, RbacGuard)
+  @Roles(Role.Customer)
   @ApiCookieAuth(JWT_COOKIE_NAME.AT)
   @ApiResponse({ type: GetTransactionRes, status: HttpStatus.ACCEPTED })
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.BAD_REQUEST })
@@ -55,7 +57,8 @@ export class TransactionsControllerV1 {
   }
 
   @Post("/transfer")
-  @UseGuards(JwtATGuard)
+  @UseGuards(JwtATGuard, RbacGuard)
+  @Roles(Role.Customer)
   @ApiCookieAuth(JWT_COOKIE_NAME.AT)
   @ApiResponse({ type: GetTransactionRes, status: HttpStatus.ACCEPTED })
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.BAD_REQUEST })
@@ -94,12 +97,13 @@ export class TransactionsControllerV1 {
   }
 
   @Get()
-  @UseGuards(JwtATGuard)
+  @UseGuards(JwtATGuard, RbacGuard)
+  @Roles(Role.Customer)
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.FORBIDDEN })
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.UNAUTHORIZED })
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.NOT_FOUND })
   @ApiResponse({ type: [GetTransactionRes], status: HttpStatus.OK })
-  async getUserTransactions(
+  async getTransactions(
     @Req() req: FastifyRequest,
     @Query() query: TransactionQueryParams
   ) {

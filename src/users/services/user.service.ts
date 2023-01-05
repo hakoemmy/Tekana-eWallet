@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "../../common/services";
 import * as bcrypt from "bcrypt";
-import { UserManagmentQueryParams} from "../../managment/controllers/v1/dto";
+import { UserManagmentQueryParams } from "../../managment/controllers/v1/dto";
 
 @Injectable()
 export class UserService {
@@ -47,8 +47,8 @@ export class UserService {
           password: await bcrypt.hash(data.password, 10),
           phoneNumberVerified: false,
           emailVerified: false,
-          flagged: false,
-        },
+          flagged: false
+        }
       });
 
       // Create user USD and RWF wallets

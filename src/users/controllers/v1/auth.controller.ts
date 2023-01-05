@@ -70,7 +70,10 @@ export class AuthControllerV1 {
       throw new ConflictException("Phone number already in use");
     }
 
-    const resp = await this.userService.createOne(data);
+    const resp = await this.userService.createOne({
+      ...data,
+      Roles: ["Customer"],
+    });
 
     return new GetUserRes(resp);
   }
