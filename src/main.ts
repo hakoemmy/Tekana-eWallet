@@ -1,17 +1,17 @@
-import { ConfigService } from '@nestjs/config';
-import { Test } from '@nestjs/testing';
-import { NestFactory } from '@nestjs/core';
-import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { AppModule } from './app.module';
-import { EVK, NODE_ENV } from './__helpers__';
-import { PrismaService } from './common/services';
-import { createFastify } from './__helpers__/fastify'
+import { ConfigService } from "@nestjs/config";
+import { Test } from "@nestjs/testing";
+import { NestFactory } from "@nestjs/core";
+import { NestFastifyApplication } from "@nestjs/platform-fastify";
+import { AppModule } from "./app.module";
+import { EVK, NODE_ENV } from "./__helpers__";
+import { PrismaService } from "./common/services";
+import { createFastify } from "./__helpers__/fastify";
 import {
   createOpenAPISpecDocument,
   createSwaggerUI,
   writeAPISpecDocumentToFs,
   bootstrapCommon,
-} from './__bootstrap__';
+} from "./__bootstrap__";
 
 const environment = process.env[EVK.NODE_ENV];
 const fastifyAdapter = createFastify(environment !== NODE_ENV.TEST);
@@ -27,7 +27,7 @@ async function createNestApplication(environment: string) {
 
   return await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    fastifyAdapter,
+    fastifyAdapter
   );
 }
 
@@ -40,10 +40,11 @@ export async function bootstrap() {
   bootstrapCommon(app, prisma);
   const openApiDocument = createOpenAPISpecDocument(app);
 
-  if (environment === NODE_ENV.DEV) createSwaggerUI(app, openApiDocument);
+  if (environment === NODE_ENV.DEV || environment === NODE_ENV.STAGE)
+    createSwaggerUI(app, openApiDocument);
 
   const PORT = config.get(EVK.PORT);
-  const ADDR = '0.0.0.0';
+  const ADDR = "0.0.0.0";
 
   switch (environment) {
     case NODE_ENV.TEST: {
@@ -58,9 +59,9 @@ export async function bootstrap() {
       writeAPISpecDocumentToFs(openApiDocument);
 
       if (process.env[EVK.NODE_ENV] === NODE_ENV.PROD) {
-        process.on('SIGTERM', async () => {
+        process.on("SIGTERM", async () => {
           await app.close();
-          console.log('SIGTERM received, gracefully shutting down');
+          console.log("SIGTERM received, gracefully shutting down");
         });
       }
 
@@ -74,4 +75,3 @@ export async function bootstrap() {
 if (process.env[EVK.NODE_ENV] !== NODE_ENV.TEST) {
   bootstrap();
 }
-

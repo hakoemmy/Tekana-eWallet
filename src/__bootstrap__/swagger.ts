@@ -25,7 +25,7 @@ export function createOpenAPISpecDocument(app: NestFastifyApplication) {
 export function createSwaggerUI(
   app: NestFastifyApplication,
   document: OpenAPIObject,
-  path = "openapi"
+  path = "/docs"
 ) {
   return SwaggerModule.setup(path, app, document, {
     swaggerOptions: { withCredentials: true },
