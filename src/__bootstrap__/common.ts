@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import fastifyCookie from 'fastify-cookie';
+import fastifyCookie from '@fastify/cookie';
 import { PrismaService } from '../common/services';
 import { fastifyCorsCallback } from './cors';
 
