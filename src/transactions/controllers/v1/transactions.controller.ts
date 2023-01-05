@@ -107,7 +107,7 @@ export class TransactionsControllerV1 {
     @Req() req: FastifyRequest,
     @Query() query: TransactionQueryParams
   ) {
-    const resp = await this.transactionService.getTransactions(
+    const resp = await this.transactionService.getUserTransactions(
       req.user.id,
       query
     );

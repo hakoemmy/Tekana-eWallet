@@ -4,6 +4,7 @@ import { WalletService } from "../../wallets/services";
 import { PrismaService } from "../../common/services";
 import { DepositFundsParams, TransferFundsParams } from "../interfaces";
 import { TransactionQueryParams } from "../controllers/v1/dto";
+import { TransactionManagmentQueryParams } from "../../managment/controllers/v1/dto";
 
 @Injectable()
 export class TransactionsService {
@@ -138,7 +139,7 @@ export class TransactionsService {
    * @returns user transactions
    */
 
-  async getTransactions(userId: number, query: TransactionQueryParams) {
+  async getUserTransactions(userId: number, query: TransactionQueryParams) {
     try {
       const where: Prisma.TransactionWhereInput = {
         OR: [
@@ -164,6 +165,104 @@ export class TransactionsService {
         };
       if (query.purpose) where.purpose = { equals: query.purpose };
       if (query.status) where.status = { equals: query.status };
+
+      return await this.prisma.transaction.findMany({
+        where: { ...where },
+        include: {
+          toWallet: {
+            select: {
+              userId: true,
+              User: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  username: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          fromWallet: {
+            select: {
+              userId: true,
+              User: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  username: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+        take: query.take,
+        skip: query.skip,
+        orderBy: { createdAt: "desc" },
+      });
+    } catch (err) {
+      console.log(err);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  /**
+   * @params  query: TransactionQueryParams
+   * - Get all transactions
+   * @returns found transactions
+   */
+
+  async findMany(query: TransactionManagmentQueryParams) {
+    try {
+      const where: Prisma.TransactionWhereInput = {};
+
+      if (query.currency)
+        where.OR = {
+          OR: [
+            {
+              toWallet: { currency: query.currency },
+            },
+            {
+              fromWallet: { currency: query.currency },
+            },
+          ],
+        };
+      if (query.purpose) where.purpose = { equals: query.purpose };
+      if (query.status) where.status = { equals: query.status };
+      if (query.userId)
+        where.OR = {
+          OR: [
+            {
+              toWallet: { userId: query.userId },
+            },
+            {
+              fromWallet: { userId: query.userId },
+            },
+          ],
+        };
+
+      if (query.username)
+        where.OR = {
+          OR: [
+            {
+              toWallet: { User: { username: query.username } },
+            },
+            {
+              fromWallet: { User: { username: query.username } },
+            },
+          ],
+        };
+      if (query.email)
+        where.OR = {
+          OR: [
+            {
+              toWallet: { User: { email: query.email } },
+            },
+            {
+              fromWallet: { User: { email: query.email } },
+            },
+          ],
+        };
 
       return await this.prisma.transaction.findMany({
         where: { ...where },
