@@ -1,7 +1,6 @@
 import { ApiProperty, ApiTags } from "@nestjs/swagger";
 import {
   Currency,
-  Prisma,
   Transaction,
   TransactionStatus,
   TransactionType,

@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "../../common/services";
 import * as bcrypt from "bcrypt";
+import { UserManagmentQueryParams} from "../../managment/controllers/v1/dto";
 
 @Injectable()
 export class UserService {
@@ -71,5 +72,26 @@ export class UserService {
       console.log(err);
       throw new InternalServerErrorException();
     }
+  }
+
+  /**
+   * @param query: UserQueryParams
+   * @returns available users
+   */
+
+  async findMany(query: UserManagmentQueryParams) {
+    const where: Prisma.UserWhereInput = {};
+
+    if (query.emailVerified)
+      where.emailVerified = { equals: query.emailVerified };
+    if (query.phoneNumberVerified)
+      where.phoneNumberVerified = { equals: query.phoneNumberVerified };
+    if (query.flagged) where.flagged = { equals: query.flagged };
+    if (query.Roles) where.Roles = { hasSome: query.Roles };
+    return await this.prisma.user.findMany({
+      take: query.take,
+      skip: query.skip,
+      where: { ...where },
+    });
   }
 }

@@ -9,5 +9,6 @@ import { UserModule } from "../users/users.module";
   imports: [CommonModule, WalletModule, UserModule],
   controllers: [TransactionsControllerV1],
   providers: [TransactionsService],
+  exports: [TransactionsService]
 })
 export class TransactionsModule {}

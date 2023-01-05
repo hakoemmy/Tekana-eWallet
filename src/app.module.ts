@@ -8,6 +8,8 @@ import { UserModule } from "./users/users.module";
 import { RouterModule } from "@nestjs/core";
 import { WalletModule } from "./wallets/wallet.module";
 import { TransactionsModule } from "./transactions/transactions.module";
+import { ManagmentModule } from "./managment/managment.module";
+
 @Module({
   imports: [
     JwtModule.register({}),
@@ -16,6 +18,7 @@ import { TransactionsModule } from "./transactions/transactions.module";
     UserModule,
     WalletModule,
     TransactionsModule,
+    ManagmentModule,
     RouterModule.register([
       {
         path: "users",
@@ -24,6 +27,10 @@ import { TransactionsModule } from "./transactions/transactions.module";
       {
         path: "wallets",
         module: WalletModule,
+      },
+      {
+        path: "managment",
+        module: ManagmentModule,
       },
     ]),
   ],
