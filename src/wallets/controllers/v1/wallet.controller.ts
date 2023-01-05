@@ -56,7 +56,7 @@ export class WalletControllerV1 {
   @ApiResponse({ type: [WalletBalanceRes], status: HttpStatus.ACCEPTED })
   @ApiResponse({ type: HttpExceptionSchema, status: HttpStatus.BAD_REQUEST })
   async getUserWallets(@Req() req: FastifyRequest) {
-    const resp = await this.walletService.getWallets(req.user.id);
+    const resp = await this.walletService.getUserWallets(req.user.id);
     return resp.map((wallet) => new WalletBalanceRes(wallet));
   }
 }

@@ -1,10 +1,12 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { PrismaService } from "../../common/services";
+import { Prisma } from "@prisma/client";
 import {
   FindWalletByUserNameParams,
   WalletFindOrCreateParams,
 } from "../interfaces";
 import { isEmail } from "class-validator";
+import { WalletManagmentQueryParams } from "../../managment/controllers/v1/dto";
 
 @Injectable()
 export class WalletService {
@@ -36,7 +38,7 @@ export class WalletService {
    * - Get available user wallets
    * @returns users's wallets
    */
-  async getWallets(userId: number) {
+  async getUserWallets(userId: number) {
     try {
       return await this.prisma.wallet.findMany({
         where: { userId },
@@ -116,6 +118,36 @@ export class WalletService {
       },
       select: {
         userId: true,
+        User: {
+          select: {
+            firstName: true,
+            lastName: true,
+            username: true,
+            email: true,
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * @param query:  WalletManagmentQueryParams
+   * @returns found wallets
+   */
+
+  async findMany(query: WalletManagmentQueryParams) {
+    const where: Prisma.WalletWhereInput = {};
+
+    if (query.currency) where.currency = { equals: query.currency };
+    if (query.balance) where.balance = { equals: query.balance };
+    if (query.userId) where.userId = { equals: query.userId };
+    if (query.username) where.User = { username: query.username };
+    if (query.email) where.User = { email: query.email };
+    return await this.prisma.wallet.findMany({
+      take: query.take,
+      skip: query.skip,
+      where: { ...where },
+      include: {
         User: {
           select: {
             firstName: true,

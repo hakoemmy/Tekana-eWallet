@@ -15,7 +15,7 @@ import { RbacGuard, Roles } from "../../../__helpers__";
 import { GetUserRes } from "../../../users/controllers/v1/dto";
 import { JwtATGuard } from "../../../users/guards";
 import { HttpExceptionSchema } from "../../../__helpers__";
-import { UserManagmentQueryParams } from "./dto/user-managment.res.dto";
+import { UserManagmentQueryParams } from "./dto";
 import { Role } from "@prisma/client";
 import { CreateUserReq } from "./dto/user-managment.req.dto";
 
