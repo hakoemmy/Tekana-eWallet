@@ -34,7 +34,6 @@ describe("AuthService", () => {
 
     service = moduleRef.get<AuthService>(AuthService);
     prisma = moduleRef.get<PrismaService>(PrismaService);
-    jwtService = moduleRef.get<JwtService>(JwtService);
   });
 
   it("getLogoutCookies", async () => {

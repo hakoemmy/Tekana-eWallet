@@ -40,16 +40,13 @@ In below sections, you'll get access to:
 
 - 🚧 The staging environment of Tekana-eWallet to play around with documentation
 - 🦴 Local environment setup of Tekana-eWallet system
-- 📈 The strategy to re-design the existing legacy application to a brand new so called: "Tekana-eWallet"
+- 📈 The strategy used to re-design the existing legacy application to a brand new solution so called: "Tekana-eWallet"
 
 ## 🚧 Tekana e-Wallet staging environment
 
 **No Extra configuration needed**
 
 - Hit this [url](https://rssb.onrender.com/docs), you'll be taken to the RESTful API docs, **note**: Since we're using free hosting service, it might delay up to 30 secs bacause, the hosting provider puts it in idle state when it's not being used. Just bare with us!
-
-- The APIs use
-
 ## 🦴 Local environment setup of Tekana-eWallet system
 
 **Extra configuration needed on a machine**
@@ -79,6 +76,10 @@ Finally run, `yarn start:dev` to sping up the dev environment, it will open up l
    Firstly, install [docker](https://www.docker.com) on you machine. Then
 
    - Run `docker compose up` in your terminal and it will open up url in browser on port: `8000` and access docs under: `http://localhost:8000/docs`
+
+3. Running unit tests
+
+  - Hit ```yarn test``` to run the unit tests
 
 ## Strategy
 
