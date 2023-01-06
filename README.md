@@ -136,15 +136,15 @@ Below are step by step strategy, I'd go through to revamp the legacy system, fir
 
        - The DRY (Don’t Repeat Yourself) Principle aims at reducing repetition and redundancies within the software engineering process. This is achieved by replacing repetitions with abstractions or by grouping code into functions.
 
-Step 5: Test and deliver
+- Step 5: Test and deliver
 
 In this stage, QA test after each user story or each major development step by identifying any bugs or impediments to progress. Tracking changes toward a smooth rollout of the completed application fully integrated and connected.
 
-Step 6: Deployment phase
+- Step 6: Deployment phase
 
 After testing the iteration and agreeing on acceptance test, in this stage DevOps team would host product using the approach defined in the requirement and send it to beta then later production.
 
-Step 6: Training and support
+- Step 6: Training and support
 
 This phase is really needed and it's planned well during development, a QA/helper center should be prepared beforehand so that when the product is released, customers will beable to use the product easily.
 
