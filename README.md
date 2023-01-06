@@ -42,6 +42,15 @@ In below sections, you'll get access to:
 - 🦴 Local environment setup of Tekana-eWallet system
 - 📈 The strategy used to re-design the existing legacy application to a brand new solution so called: "Tekana-eWallet"
 
+## Key Note
+
+- Whatever approach you will use to setup the project, to access managment module you'll need a super admin credentials: 
+
+```
+  emailOrUsername: tekana,
+  password: 12345678
+```
+, to do just customer related features, you will first register with your own credentials.
 ## 🚧 Tekana e-Wallet staging environment
 
 **No Extra configuration needed**
