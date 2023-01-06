@@ -82,7 +82,7 @@ Finally run, `yarn start:dev` to sping up the dev environment, it will open up l
 
 - Hit `yarn test` to run the unit tests
 
-## Strategy
+## 📈 Strategy
 
 ### Mission
 
