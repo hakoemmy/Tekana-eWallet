@@ -164,7 +164,3 @@ This phase is really needed and it's planned well during development, a QA/helpe
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENCE.md) file for details
-
-## Acknowledgments
-
-- [Rwanda Social Security Board(RSSB)](https://www.rssb.rw/)
